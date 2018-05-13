@@ -23,7 +23,6 @@ class LASHandler:
         plt.hist(loadedLASFile.intensity)
         plt.title('Histogram of the Intensity Dimension')
         plt.show()
-        MainRunner.histogramAct.setEnabled(False)
 
     def showLASFileMetadata(self,MainRunner, loadedLASFile):
         MainRunner.metadataviewer = MetadataViewer.MetadataViewer(loadedLASFile)
@@ -31,7 +30,6 @@ class LASHandler:
     def compresslasfile(self, lastoolspath, inputlasfilepath, outputlazfilepath):
         cwd = os.getcwd()
         batfilepath = os.path.join(cwd, "resources\compresslas.bat")
-        print(batfilepath)
         p = Popen([batfilepath, lastoolspath, inputlasfilepath, outputlazfilepath], stdout=PIPE, stderr=PIPE)
         p.communicate()
         p.wait()
@@ -40,7 +38,6 @@ class LASHandler:
     def decompresslazfile(self, lastoolspath, inputlazfilepath, outputlasfilepath):
         cwd = os.getcwd()
         batfilepath = os.path.join(cwd, "resources\decompresslaz.bat")
-        print(batfilepath)
         p = Popen([batfilepath, lastoolspath, inputlazfilepath, outputlasfilepath], stdout=PIPE, stderr=PIPE)
         p.communicate()
         p.wait()

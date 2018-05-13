@@ -9,19 +9,24 @@ class MainFrame(Frame):
     CONST_LASTOOLS_PATH = 'D:/Education/Master/Thesis/Sources/LAStools/bin'
 
     def __init__(self, master=None):
-        Frame.__init__(self, master, relief=SUNKEN, bd=2)
-        self.initUI()
+        Frame.__init__(self, master)
+        self.master = master
+        self.init_window()
 
-    def initUI(self):
-        self.menubar = Menu(self)
+    def init_window(self):
+        self.master.title("Main Window-LiDAR Compression System")
+        self.pack(fill=BOTH, expand=1)
 
-        filemenu = Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(label="File", menu=filemenu)
+        menubar = Menu(self.master)
+        self.master.config(menu=menubar)
+
+        filemenu = Menu(menubar, tearoff=0)
         filemenu.add_command(label="Load File", command=self.loadfile)
-        filemenu.add_command(label="Exit", command=self.quit)
+        filemenu.add_command(label="Exit", command=self.exit)
+        menubar.add_cascade(label="File", menu=filemenu)
 
-        toolsmenu = Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(label="Tools", menu=toolsmenu)
+        toolsmenu = Menu(menubar, tearoff=0)
+
         toolsmenu.add_command(label="View Metadata", command=self.metadata)
         toolsmenu.add_command(label="View Histogram", command=self.histogram)
         toolsmenu.add_separator()
@@ -30,24 +35,14 @@ class MainFrame(Frame):
         compressmenu.add_command(label='LAS', command=self.compresslas)
         compressmenu.add_command(label='ASCII')
         toolsmenu.add_command(label="Decompress", command=self.decompresslaz)
+        menubar.add_cascade(label="Tools", menu=toolsmenu)
 
-        helpmenu = Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(label="Help", menu=helpmenu)
+        helpmenu = Menu(menubar, tearoff=0)
         helpmenu.add_command(label="About", command=self.about)
+        menubar.add_cascade(label="Help", menu=helpmenu)
 
-        try:
-            self.master.config(menu=self.menubar)
-        except AttributeError:
-            self.master.tk.call(self.master, "config", "-menu", self.menubar)
-
-        self.canvas = Canvas(self, bg="white", width=600, height=400,
-                             bd=0, highlightthickness=0)
-        self.canvas.pack()
-
-    def about(self):
-        tkMessageBox.showinfo("LiDAR Compression System",
-                              "LiDAR Compression System is an adaptable system for compressing LiDAR data."
-                              "LiDAR Compression System Version 0.1")
+    def exit(self):
+        exit()
 
     def loadfile(self):
         inputLASFilePath = tkFileDialog.askopenfilename(initialdir="/", title="Select LAS File",
@@ -55,8 +50,10 @@ class MainFrame(Frame):
         lashandler = LASHandler.LASHandler()
         self.loadedLASFile = lashandler.loadLASFile(inputLASFilePath)
 
-    def quit(self):
-        root.quit()
+    def about(self):
+        tkMessageBox.showinfo("LiDAR Compression System",
+                              "LiDAR Compression System is an adaptable system for compressing LiDAR data."
+                              "LiDAR Compression System Version 0.1")
 
     def histogram(self):
         lashandler = LASHandler.LASHandler()
@@ -81,9 +78,3 @@ class MainFrame(Frame):
         data = inputlazfilepath.split('.')
         outputlasfilepath = data[0] + ".las"
         lashandler.decompresslazfile(self.CONST_LASTOOLS_PATH, inputlazfilepath, outputlasfilepath)
-
-
-root = Tk()
-app = MainFrame(root)
-app.pack()
-root.mainloop()

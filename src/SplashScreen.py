@@ -1,39 +1,43 @@
-from Tkinter import *
+import Tkinter as Tk
 
 from src.MainFrame import MainFrame
 
 
-class SplashScreen(Frame):
-    def __init__(self, master=None, width=0.4, height=0.2, useFactor=True):
-        Frame.__init__(self, master)
-        self.pack(side=TOP, fill=BOTH, expand=YES)
+class SplashScreen(object):
+    def __init__(self, parent):
+        self.root = parent
+        self.root.title("Home-LiDAR Compression System")
+        self.frame = Tk.Frame(parent)
+        self.frame.pack()
 
-        # get screen width and height
-        ws = self.master.winfo_screenwidth()
-        hs = self.master.winfo_screenheight()
-        w = (useFactor and ws * width) or width
-        h = (useFactor and ws * height) or height
-        # calculate position x, y
-        x = (ws / 2) - (w / 2)
-        y = (hs / 2) - (h / 2)
-        self.master.geometry('%dx%d+%d+%d' % (w, h, x, y))
+        lbl1 = Tk.Label(root, text="Welcome to LiDAR Data Compression System", bg='red')
+        lbl1.place(x=110, y=120)
+        lbl1.config(font=("calibri", 16))
+        lbl2 = Tk.Label(root, text="Ahmed Kotb", bg='red')
+        lbl2.place(x=240, y=160)
+        lbl2.config(font=("calibri", 16))
+        lbl3 = Tk.Label(root, text="FCI_NARSS", bg='red')
+        lbl3.place(x=245, y=200)
+        lbl3.config(font=("calibri", 16))
+        btn = Tk.Button(root, text="Enter to System", bg='red', command=self.openFrame)
+        btn.pack(side=Tk.BOTTOM, fill=Tk.X, padx=10)
+        btn.config(font=("calibri", 16))
 
-        self.master.overrideredirect(True)
-        self.lift()
-
-    def openmainframe(self):
+    def hide(self):
         self.root.withdraw()
-        root = Tk()
+
+    def openFrame(self):
+        self.hide()
+        root = Tk.Tk()
+        root.geometry("600x400")
         app = MainFrame(root)
-        app.pack()
         root.mainloop()
 
 
-root = Tk()
-sp = SplashScreen(root)
-sp.config(bg="#3366ff")
-m = Label(sp, text="LiDAR Data Compression System\n\n\nAhmed Kotb\nA.Kotb@narss.sci.eg")
-m.pack(side=TOP, expand=YES)
-m.config(bg="#3366ff", justify=CENTER, font=("calibri", 29))
-Button(sp, text="Enter", bg='red', command=sp.openmainframe).pack(side=BOTTOM, fill=X)
-root.mainloop()
+if __name__ == "__main__":
+    root = Tk.Tk()
+    root.geometry("600x400+100+100")
+    root.overrideredirect(1)
+    root.config(bg="blue")
+    app = SplashScreen(root)
+    root.mainloop()
