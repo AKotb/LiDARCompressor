@@ -23,16 +23,22 @@
 # for licensing see http://lastools.org/LICENSE.txt
 #
 
-import sys, os, arcgisscripting, subprocess
+import arcgisscripting
+import os
+import subprocess
+import sys
 
-def check_output(command,console):
+
+def check_output(command, console):
     if console == True:
         process = subprocess.Popen(command)
     else:
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
-    output,error = process.communicate()
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                   universal_newlines=True)
+    output, error = process.communicate()
     returncode = process.poll()
-    return returncode,output 
+    return returncode, output
+
 
 ### create the geoprocessor object
 gp = arcgisscripting.create(9.3)
@@ -41,19 +47,19 @@ gp = arcgisscripting.create(9.3)
 gp.AddMessage("Starting huge_file_normalize ...")
 
 ### define positions of arguments in argv array
-arg_input_file     =  1
-arg_tile_size      =  2
-arg_buffer         =  3
-arg_terrain_type   =  4
-arg_granularity    =  5
-arg_drop_above     =  6
-arg_drop_below     =  7
-arg_cores          =  8
-arg_empty_temp_dir =  9
-arg_output_file    = 10
-arg_output_format  = 11
-arg_verbose        = 12
-arg_count_needed   = 13
+arg_input_file = 1
+arg_tile_size = 2
+arg_buffer = 3
+arg_terrain_type = 4
+arg_granularity = 5
+arg_drop_above = 6
+arg_drop_below = 7
+arg_cores = 8
+arg_empty_temp_dir = 9
+arg_output_file = 10
+arg_output_format = 11
+arg_verbose = 12
+arg_count_needed = 13
 
 ### get number of arguments
 argc = len(sys.argv)
@@ -61,11 +67,11 @@ argc = len(sys.argv)
 ### make sure we have right number of arguments
 if argc != arg_count_needed:
     gp.AddMessage("Error. Wrong number of arguments. Got " + str(argc) + " expected " + str(arg_count_needed))
-    sys.exit(1)    
+    sys.exit(1)
 
 ### report arguments (for debug)
-#gp.AddMessage("Arguments:")
-#for i in range(0, argc):
+# gp.AddMessage("Arguments:")
+# for i in range(0, argc):
 #    gp.AddMessage("[" + str(i) + "]" + sys.argv[i])
 
 ### get selected arguments
@@ -79,14 +85,14 @@ if lastools_path.count(" ") > 0:
     gp.AddMessage("Error. Path to .\\lastools installation contains spaces.")
     gp.AddMessage("This does not work: " + lastools_path)
     gp.AddMessage("This would work:    C:\\software\\lastools")
-    sys.exit(1)    
+    sys.exit(1)
 
 ### make sure the path does not contain open or closing brackets
 if (lastools_path.count("(") > 0) or (lastools_path.count(")") > 0):
     gp.AddMessage("Error. Path to .\\lastools installation contains brackets.")
     gp.AddMessage("This does not work: " + lastools_path)
     gp.AddMessage("This would work:    C:\\software\\lastools")
-    sys.exit(1)   
+    sys.exit(1)
 
 ### complete the path to where the LAStools executables are
 lastools_path = lastools_path + "\\bin"
@@ -99,7 +105,7 @@ else:
     gp.AddMessage("Found " + lastools_path + " ...")
 
 ### create the full path to the lastile executable
-lastile_path = lastools_path+"\\lastile.exe"
+lastile_path = lastools_path + "\\lastile.exe"
 
 ### check if the lastile executable exists
 if os.path.exists(lastile_path) == False:
@@ -109,7 +115,7 @@ else:
     gp.AddMessage("Found " + lastile_path + " ...")
 
 ### create the full path to the lasground executable
-lasground_path = lastools_path+"\\lasground.exe"
+lasground_path = lastools_path + "\\lasground.exe"
 
 ### check if the lasground executable exists
 if os.path.exists(lasground_path) == False:
@@ -119,7 +125,7 @@ else:
     gp.AddMessage("Found " + lasground_path + " ...")
 
 ### create the full path to the lasheight executable
-lasheight_path = lastools_path+"\\lasheight.exe"
+lasheight_path = lastools_path + "\\lasheight.exe"
 
 ### check if the lasheight executable exists
 if os.path.exists(lasheight_path) == False:
@@ -147,7 +153,7 @@ else:
 ###################################################
 
 ### create the command string for lastile.exe
-command = ['"'+lastile_path+'"']
+command = ['"' + lastile_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -155,17 +161,17 @@ if sys.argv[arg_verbose] == "true":
 
 ### add input LiDAR
 command.append("-i")
-command.append('"'+sys.argv[arg_input_file]+'"')
+command.append('"' + sys.argv[arg_input_file] + '"')
 
 ### maybe use a user-defined tile size
 if sys.argv[arg_tile_size] != "1000":
     command.append("-tile_size")
-    command.append(sys.argv[arg_tile_size].replace(",","."))
+    command.append(sys.argv[arg_tile_size].replace(",", "."))
 
 ### maybe create a buffer around the tiles
 if sys.argv[arg_buffer] != "0":
     command.append("-buffer")
-    command.append(sys.argv[arg_buffer].replace(",","."))
+    command.append(sys.argv[arg_buffer].replace(",", "."))
 
 ### make tiling reversible
 command.append("-reversible")
@@ -173,7 +179,7 @@ command.append("-reversible")
 ### maybe an output directory was selected
 if empty_temp_dir != "#":
     command.append("-odir")
-    command.append('"'+empty_temp_dir+'"')
+    command.append('"' + empty_temp_dir + '"')
 
 ### give temporary tiles a meaningful name
 command.append("-o")
@@ -193,7 +199,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lastile
 gp.AddMessage(str(output))
@@ -211,7 +217,7 @@ gp.AddMessage("lastile step done.")
 ###################################################
 
 ### create the command string for lasground.exe
-command = ['"'+lasground_path+'"']
+command = ['"' + lasground_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -220,7 +226,7 @@ if sys.argv[arg_verbose] == "true":
 ### add input LiDAR
 command.append("-i")
 if empty_temp_dir != "#":
-    command.append('"'+empty_temp_dir+"\\temp_huge_normalize*.laz"+'"')
+    command.append('"' + empty_temp_dir + "\\temp_huge_normalize*.laz" + '"')
 else:
     command.append("temp_huge_normalize*.laz")
 
@@ -265,7 +271,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lasground
 gp.AddMessage(str(output))
@@ -283,7 +289,7 @@ gp.AddMessage("lasground step done.")
 ###################################################
 
 ### create the command string for lasheight.exe
-command = ['"'+lasheight_path+'"']
+command = ['"' + lasheight_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -292,7 +298,7 @@ if sys.argv[arg_verbose] == "true":
 ### add input LiDAR
 command.append("-i")
 if empty_temp_dir != "#":
-    command.append('"'+empty_temp_dir+"\\temp_huge_normalize*_g.laz"+'"')
+    command.append('"' + empty_temp_dir + "\\temp_huge_normalize*_g.laz" + '"')
 else:
     command.append("temp_huge_normalize*_g.laz")
 
@@ -302,12 +308,12 @@ command.append("-replace_z")
 ### maybe we should drop all points above
 if sys.argv[arg_drop_above] != "#":
     command.append("-drop_above")
-    command.append(sys.argv[arg_drop_above].replace(",","."))
+    command.append(sys.argv[arg_drop_above].replace(",", "."))
 
 ### maybe we should drop all points below 
 if sys.argv[arg_drop_below] != "#":
     command.append("-drop_below")
-    command.append(sys.argv[arg_drop_below].replace(",","."))
+    command.append(sys.argv[arg_drop_below].replace(",", "."))
 
 ### give height-normalized tiles a meaningful appendix
 command.append("-odix")
@@ -332,7 +338,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lasheight
 gp.AddMessage(str(output))
@@ -350,7 +356,7 @@ gp.AddMessage("lasheight step done.")
 ###################################################
 
 ### create the command string for lastile.exe
-command = ['"'+lastile_path+'"']
+command = ['"' + lastile_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -359,7 +365,7 @@ if sys.argv[arg_verbose] == "true":
 ### add input LiDAR
 command.append("-i")
 if empty_temp_dir != "#":
-    command.append('"'+empty_temp_dir+"\\temp_huge_normalize*_gh.laz"+'"')
+    command.append('"' + empty_temp_dir + "\\temp_huge_normalize*_gh.laz" + '"')
 else:
     command.append("temp_huge_normalize*_gh.laz")
 
@@ -369,7 +375,7 @@ command.append("-reverse_tiling")
 ### maybe an output file name was selected
 if sys.argv[arg_output_file] != "#":
     command.append("-o")
-    command.append('"'+sys.argv[arg_output_file]+'"')
+    command.append('"' + sys.argv[arg_output_file] + '"')
 
 ### maybe an output format was selected
 if sys.argv[arg_output_format] != "#":
@@ -407,7 +413,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lastile (reverse)
 gp.AddMessage(str(output))
@@ -429,7 +435,7 @@ command = ["del"]
 
 ### add temporary files wildcard
 if empty_temp_dir != "#":
-    command.append('"'+empty_temp_dir+"\\temp_huge_normalize*.laz"+'"')
+    command.append('"' + empty_temp_dir + "\\temp_huge_normalize*.laz" + '"')
 else:
     command.append("temp_huge_normalize*.laz")
 
@@ -444,7 +450,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of clean-up
 gp.AddMessage(str(output))

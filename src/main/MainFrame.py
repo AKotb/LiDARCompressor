@@ -43,14 +43,22 @@ class MainFrame(Frame):
         helpmenu.add_command(label="About", command=self.about)
         menubar.add_cascade(label="Help", menu=helpmenu)
 
+        S = Scrollbar(self.master)
+        S.pack(side=RIGHT, fill=Y)
+        self.T = Text(self.master, height=400, width=380)
+        self.T.pack(side=LEFT, fill=Y)
+        S.config(command=self.T.yview)
+        self.T.config(yscrollcommand=S.set)
+
     def exit(self):
         exit()
 
     def loadfile(self):
-        inputLASFilePath = tkFileDialog.askopenfilename(initialdir="/", title="Select LAS File",
-                                                        filetypes=(("LAS Files", "*.las"), ("All Files", "*.*")))
+        self.inputfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select LAS File", filetypes=(("LAS Files", "*.las"),("All Files", "*.*")))
         lashandler = LASHandler.LASHandler()
-        self.loadedLASFile = lashandler.loadLASFile(inputLASFilePath)
+        self.loadedLASFile = lashandler.loadLASFile(self.inputfilepath)
+        self.T.delete(1.0, END)
+        self.T.insert(END, "File: [" + self.inputfilepath + "] Loaded Successfully")
 
     def about(self):
         tkMessageBox.showinfo("LiDAR Compression System",
@@ -59,11 +67,21 @@ class MainFrame(Frame):
 
     def histogram(self):
         lashandler = LASHandler.LASHandler()
-        lashandler.generateLASFileHistogram(self, self.loadedLASFile)
+        lashandler.generateLASFileHistogram(self.loadedLASFile)
 
     def metadata(self):
+        inputfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select Input File",
+                                                          filetypes=(("LAS Files", "*.las"), ("LAZ Files", "*.laz"),
+                                                                     ("All Files", "*.*")))
         lashandler = LASHandler.LASHandler()
-        lashandler.showLASFileMetadata(self, self.loadedLASFile)
+        lashandler.viewfileinfo(self.CONST_LASTOOLS_PATH, inputfilepath)
+        data = inputfilepath.split('.')
+        infofilepath = data[0] + "_info.txt"
+        infofile = open(infofilepath, "r")
+        self.T.delete(1.0, END)
+        for line in infofile:
+            self.T.insert(END, line)
+        infofile.close()
 
     def compresslas(self):
         inputlasfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select LAS File",
@@ -81,3 +99,15 @@ class MainFrame(Frame):
         data = inputlazfilepath.split('.')
         outputlasfilepath = data[0] + ".las"
         lashandler.decompresslazfile(self.CONST_LASTOOLS_PATH, inputlazfilepath, outputlasfilepath)
+
+
+sys._excepthook = sys.excepthook
+
+
+def my_exception_hook(exctype, value, traceback):
+    print(exctype, value, traceback)
+    sys._excepthook(exctype, value, traceback)
+    sys.exit(1)
+
+
+sys.excepthook = my_exception_hook

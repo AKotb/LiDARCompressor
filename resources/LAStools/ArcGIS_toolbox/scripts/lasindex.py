@@ -11,16 +11,22 @@
 # for licensing see http://lastools.org/LICENSE.txt
 #
 
-import sys, os, arcgisscripting, subprocess
+import arcgisscripting
+import os
+import subprocess
+import sys
 
-def check_output(command,console):
+
+def check_output(command, console):
     if console == True:
         process = subprocess.Popen(command)
     else:
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
-    output,error = process.communicate()
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                   universal_newlines=True)
+    output, error = process.communicate()
     returncode = process.poll()
-    return returncode,output 
+    return returncode, output
+
 
 ### create the geoprocessor object
 gp = arcgisscripting.create(9.3)
@@ -32,8 +38,8 @@ gp.AddMessage("Starting lasindex ...")
 argc = len(sys.argv)
 
 ### report arguments (for debug)
-#gp.AddMessage("Arguments:")
-#for i in range(0, argc):
+# gp.AddMessage("Arguments:")
+# for i in range(0, argc):
 #    gp.AddMessage("[" + str(i) + "]" + sys.argv[i])
 
 ### get the path to LAStools
@@ -44,7 +50,7 @@ if lastools_path.count(" ") > 0:
     gp.AddMessage("Error. Path to .\\lastools installation contains spaces.")
     gp.AddMessage("This does not work: " + lastools_path)
     gp.AddMessage("This would work:    C:\\software\\lastools")
-    sys.exit(1)    
+    sys.exit(1)
 
 ### complete the path to where the LAStools executables are
 lastools_path = lastools_path + "\\bin"
@@ -57,7 +63,7 @@ else:
     gp.AddMessage("Found " + lastools_path + " ...")
 
 ### create the full path to the lasindex executable
-lasindex_path = lastools_path+"\\lasindex.exe"
+lasindex_path = lastools_path + "\\lasindex.exe"
 
 ### check if executable exists
 if os.path.exists(lastools_path) == False:
@@ -67,10 +73,10 @@ else:
     gp.AddMessage("Found " + lasindex_path + " ...")
 
 ### create the command string for lasindex.exe
-command = ['"'+lasindex_path+'"']
+command = ['"' + lasindex_path + '"']
 
 ### maybe use '-verbose' option
-if sys.argv[argc-1] == "true":
+if sys.argv[argc - 1] == "true":
     command.append("-v")
 
 ### counting up the arguments
@@ -107,7 +113,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lasindex
 gp.AddMessage(str(output))

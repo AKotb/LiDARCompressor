@@ -13,16 +13,22 @@
 # for licensing see http://lastools.org/LICENSE.txt
 #
 
-import sys, os, arcgisscripting, subprocess
+import arcgisscripting
+import os
+import subprocess
+import sys
 
-def check_output(command,console):
+
+def check_output(command, console):
     if console == True:
         process = subprocess.Popen(command)
     else:
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
-    output,error = process.communicate()
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                   universal_newlines=True)
+    output, error = process.communicate()
     returncode = process.poll()
-    return returncode,output 
+    return returncode, output
+
 
 ### create the geoprocessor object
 gp = arcgisscripting.create(9.3)
@@ -34,8 +40,8 @@ gp.AddMessage("Starting las2las (project) production ...")
 argc = len(sys.argv)
 
 ### report arguments (for debug)
-#gp.AddMessage("Arguments:")
-#for i in range(0, argc):
+# gp.AddMessage("Arguments:")
+# for i in range(0, argc):
 #    gp.AddMessage("[" + str(i) + "]" + sys.argv[i])
 
 ### get the path to LAStools
@@ -46,7 +52,7 @@ if lastools_path.count(" ") > 0:
     gp.AddMessage("Error. Path to .\\lastools installation contains spaces.")
     gp.AddMessage("This does not work: " + lastools_path)
     gp.AddMessage("This would work:    C:\\software\\lastools")
-    sys.exit(1)    
+    sys.exit(1)
 
 ### complete the path to where the LAStools executables are
 lastools_path = lastools_path + "\\bin"
@@ -59,7 +65,7 @@ else:
     gp.AddMessage("Found " + lastools_path + " ...")
 
 ### create the full path to the las2las executable
-las2las_path = lastools_path+"\\las2las.exe"
+las2las_path = lastools_path + "\\las2las.exe"
 
 ### check if executable exists
 if os.path.exists(lastools_path) == False:
@@ -69,17 +75,17 @@ else:
     gp.AddMessage("Found " + las2las_path + " ...")
 
 ### create the command string for las2las.exe
-command = ['"'+las2las_path+'"']
+command = ['"' + las2las_path + '"']
 
 ### maybe use '-verbose' option
-if sys.argv[argc-1] == "true":
+if sys.argv[argc - 1] == "true":
     command.append("-v")
 
 ### counting up the arguments
 c = 1
 
 ### add input LiDAR
-wildcards = sys.argv[c+1].split()
+wildcards = sys.argv[c + 1].split()
 for wildcard in wildcards:
     command.append("-i")
     command.append('"' + sys.argv[c] + "\\" + wildcard + '"')
@@ -90,33 +96,33 @@ if sys.argv[c] != "#":
     ### UTM
     if sys.argv[c] == "UTM":
         ### if UTM zone was specified
-        if sys.argv[c+1] != "#":
+        if sys.argv[c + 1] != "#":
             command.append("-utm")
-            if sys.argv[c+2] == "true":
-                command.append(sys.argv[c+1] + "N")
+            if sys.argv[c + 2] == "true":
+                command.append(sys.argv[c + 1] + "N")
             else:
-                command.append(sys.argv[c+1] + "K")
+                command.append(sys.argv[c + 1] + "K")
         else:
             gp.AddMessage("ERROR: no UTM zone specified")
             sys.exit(1)
-### longlat
+    ### longlat
     elif sys.argv[c] == "Longitude Latitude":
         command.append("-longlat")
     ### State Plane NAD83
     elif sys.argv[c] == "State Plane NAD83":
         ### if state plane was specified
-        if sys.argv[c+3] != "#":
+        if sys.argv[c + 3] != "#":
             command.append("-sp83")
-            command.append(sys.argv[c+3])
+            command.append(sys.argv[c + 3])
         else:
             gp.AddMessage("ERROR: no state plane 83 specified")
             sys.exit(1)
     ### State Plane NAD27
     elif sys.argv[c] == "State Plane NAD27":
         ### if state plane was specified
-        if sys.argv[c+3] != "#":
+        if sys.argv[c + 3] != "#":
             command.append("-sp27")
-            command.append(sys.argv[c+3])
+            command.append(sys.argv[c + 3])
         else:
             gp.AddMessage("ERROR: no state plane 27 specified")
             sys.exit(1)
@@ -124,12 +130,12 @@ c = c + 4
 
 ### maybe current units are feet
 if sys.argv[c] == "true":
-        command.append("-feet")
+    command.append("-feet")
 c = c + 1
 
 ### maybe current elevation units are feet
 if sys.argv[c] == "true":
-        command.append("-elevation_feet")
+    command.append("-elevation_feet")
 c = c + 1
 
 ### target projection must be specified
@@ -137,12 +143,12 @@ if sys.argv[c] != "#":
     ### UTM
     if sys.argv[c] == "UTM":
         ### if UTM zone was specified
-        if sys.argv[c+1] != "#":
+        if sys.argv[c + 1] != "#":
             command.append("-target_utm")
-            if sys.argv[c+2] == "true":
-                command.append(sys.argv[c+1] + "N")
+            if sys.argv[c + 2] == "true":
+                command.append(sys.argv[c + 1] + "N")
             else:
-                command.append(sys.argv[c+1] + "K")
+                command.append(sys.argv[c + 1] + "K")
         else:
             gp.AddMessage("ERROR: no target UTM zone specified")
             sys.exit(1)
@@ -152,18 +158,18 @@ if sys.argv[c] != "#":
     ### State Plane NAD83
     elif sys.argv[c] == "State Plane NAD 83":
         ### if state plane was specified
-        if sys.argv[c+3] != "#":
+        if sys.argv[c + 3] != "#":
             command.append("-target_sp83")
-            command.append(sys.argv[c+3])
+            command.append(sys.argv[c + 3])
         else:
             gp.AddMessage("ERROR: no target state plane 83 specified")
             sys.exit(1)
     ### State Plane NAD27
     elif sys.argv[c] == "State Plane NAD 27":
         ### if state plane was specified
-        if sys.argv[c+3] != "#":
+        if sys.argv[c + 3] != "#":
             command.append("-target_sp27")
-            command.append(sys.argv[c+3])
+            command.append(sys.argv[c + 3])
         else:
             gp.AddMessage("ERROR: no target state plane 27 specified")
             sys.exit(1)
@@ -174,14 +180,14 @@ c = c + 4
 
 ### maybe target units are feet
 if sys.argv[12] == "true":
-        command.append("-target_feet")
+    command.append("-target_feet")
 c = c + 1
-    
+
 ### maybe target elevation units are feet
 if sys.argv[13] == "true":
-        command.append("-target_elevation_feet")
+    command.append("-target_elevation_feet")
 c = c + 1
-            
+
 ### maybe an output format was selected
 if sys.argv[c] != "#":
     if sys.argv[c] == "las":
@@ -205,13 +211,13 @@ c = c + 1
 ### maybe an output directory was selected
 if sys.argv[c] != "#":
     command.append("-odir")
-    command.append('"'+sys.argv[c]+'"')
+    command.append('"' + sys.argv[c] + '"')
 c = c + 1
 
 ### maybe an output appendix was selected
 if sys.argv[c] != "#":
     command.append("-odix")
-    command.append('"'+sys.argv[c]+'"')
+    command.append('"' + sys.argv[c] + '"')
 c = c + 1
 
 ### maybe we should run on multiple cores
@@ -237,7 +243,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of las2las
 gp.AddMessage(str(output))

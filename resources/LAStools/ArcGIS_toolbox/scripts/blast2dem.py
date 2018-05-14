@@ -12,16 +12,22 @@
 # for licensing see http://lastools.org/LICENSE.txt
 #
 
-import sys, os, arcgisscripting, subprocess
+import arcgisscripting
+import os
+import subprocess
+import sys
 
-def check_output(command,console):
+
+def check_output(command, console):
     if console == True:
         process = subprocess.Popen(command)
     else:
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
-    output,error = process.communicate()
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                   universal_newlines=True)
+    output, error = process.communicate()
     returncode = process.poll()
-    return returncode,output 
+    return returncode, output
+
 
 ### create the geoprocessor object
 gp = arcgisscripting.create(9.3)
@@ -33,8 +39,8 @@ gp.AddMessage("Starting blast2dem ...")
 argc = len(sys.argv)
 
 ### report arguments (for debug)
-#gp.AddMessage("Arguments:")
-#for i in range(0, argc):
+# gp.AddMessage("Arguments:")
+# for i in range(0, argc):
 #    gp.AddMessage("[" + str(i) + "]" + sys.argv[i])
 
 ### get the path to LAStools
@@ -45,7 +51,7 @@ if lastools_path.count(" ") > 0:
     gp.AddMessage("Error. Path to .\\lastools installation contains spaces.")
     gp.AddMessage("This does not work: " + lastools_path)
     gp.AddMessage("This would work:    C:\\software\\lastools")
-    sys.exit(1)    
+    sys.exit(1)
 
 ### complete the path to where the LAStools executables are
 lastools_path = lastools_path + "\\bin"
@@ -58,7 +64,7 @@ else:
     gp.AddMessage("Found " + lastools_path + " ...")
 
 ### create the full path to the blast2dem executable
-blast2dem_path = lastools_path+"\\blast2dem.exe"
+blast2dem_path = lastools_path + "\\blast2dem.exe"
 
 ### check if executable exists
 if os.path.exists(lastools_path) == False:
@@ -68,30 +74,30 @@ else:
     gp.AddMessage("Found " + blast2dem_path + " ...")
 
 ### create the command string for blast2dem.exe
-command = ['"'+blast2dem_path+'"']
+command = ['"' + blast2dem_path + '"']
 
 ### maybe use '-verbose' option
-if sys.argv[argc-1] == "true":
+if sys.argv[argc - 1] == "true":
     command.append("-v")
 
 ### add input LiDAR
 command.append("-i")
-command.append('"'+sys.argv[1]+'"')
+command.append('"' + sys.argv[1] + '"')
 
 ### maybe use a user-defined step size
 if sys.argv[2] != "1":
     command.append("-step")
-    command.append(sys.argv[2].replace(",","."))
+    command.append(sys.argv[2].replace(",", "."))
 
 ### maybe use a user-defined kill
 if sys.argv[3] != "100":
     command.append("-kill")
-    command.append(sys.argv[3].replace(",","."))
+    command.append(sys.argv[3].replace(",", "."))
 
 ### what should we raster
 if sys.argv[4] == "intensity":
     command.append("-intensity")
-        
+
 ### what should we output
 if sys.argv[5] == "hillshade":
     command.append("-hillshade")
@@ -123,7 +129,7 @@ if sys.argv[5] == "hillshade":
         elif sys.argv[6] == "north west":
             command.append("-1")
             command.append("1")
-        else: ### if sys.argv[6] == "south west"
+        else:  ### if sys.argv[6] == "south west"
             command.append("-1")
             command.append("-1")
         if sys.argv[7] == "noon":
@@ -134,15 +140,15 @@ if sys.argv[5] == "hillshade":
             command.append("1")
         elif sys.argv[7] == "6 pm":
             command.append("0.5")
-        else: ### if sys.argv[7] == "9 pm"
+        else:  ### if sys.argv[7] == "9 pm"
             command.append("0.1")
 
 ### do we have a min max value for colors
 if (sys.argv[7] == "gray ramp"):
     if (sys.argv[8] != "#") and (sys.argv[9] != "#"):
         command.append("-set_min_max")
-        command.append(sys.argv[8].replace(",","."))
-        command.append(sys.argv[9].replace(",","."))
+        command.append(sys.argv[8].replace(",", "."))
+        command.append(sys.argv[9].replace(",", "."))
 
 ### what should we triangulate
 if sys.argv[10] == "ground points only":
@@ -186,23 +192,23 @@ if sys.argv[out] != "#":
     command.append("-o" + sys.argv[out])
 
 ### maybe an output file name was selected
-if sys.argv[out+1] != "#":
+if sys.argv[out + 1] != "#":
     command.append("-o")
-    command.append('"'+sys.argv[out+1]+'"')
-    
+    command.append('"' + sys.argv[out + 1] + '"')
+
 ### maybe an output directory was selected
-if sys.argv[out+2] != "#":
+if sys.argv[out + 2] != "#":
     command.append("-odir")
-    command.append('"'+sys.argv[out+2]+'"')
+    command.append('"' + sys.argv[out + 2] + '"')
 
 ### maybe an output appendix was selected
-if sys.argv[out+3] != "#":
+if sys.argv[out + 3] != "#":
     command.append("-odix")
-    command.append('"'+sys.argv[out+3]+'"')
+    command.append('"' + sys.argv[out + 3] + '"')
 
 ### maybe there are additional command-line options
-if sys.argv[out+4] != "#":
-    additional_options = sys.argv[out+4].split()
+if sys.argv[out + 4] != "#":
+    additional_options = sys.argv[out + 4].split()
     for option in additional_options:
         command.append(option)
 
@@ -217,7 +223,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of blast2dem
 gp.AddMessage(str(output))

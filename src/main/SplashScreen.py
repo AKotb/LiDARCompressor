@@ -1,4 +1,5 @@
 import Tkinter as Tk
+import sys
 
 from src.main.MainFrame import MainFrame
 
@@ -10,16 +11,16 @@ class SplashScreen(object):
         self.frame = Tk.Frame(parent)
         self.frame.pack()
 
-        lbl1 = Tk.Label(root, text="Welcome to LiDAR Data Compression System", bg='red')
+        lbl1 = Tk.Label(root, text="Welcome to LiDAR Data Compression System", bg='yellow')
         lbl1.place(x=110, y=120)
         lbl1.config(font=("calibri", 16))
-        lbl2 = Tk.Label(root, text="Ahmed Kotb", bg='red')
+        lbl2 = Tk.Label(root, text="Ahmed Kotb", bg='yellow')
         lbl2.place(x=240, y=160)
         lbl2.config(font=("calibri", 16))
-        lbl3 = Tk.Label(root, text="FCI_NARSS", bg='red')
+        lbl3 = Tk.Label(root, text="FCI_NARSS", bg='yellow')
         lbl3.place(x=245, y=200)
         lbl3.config(font=("calibri", 16))
-        btn = Tk.Button(root, text="Enter to System", bg='red', command=self.openFrame)
+        btn = Tk.Button(root, text="Enter to System", bg='yellow', command=self.openFrame)
         btn.pack(side=Tk.BOTTOM, fill=Tk.X, padx=10)
         btn.config(font=("calibri", 16))
 
@@ -41,3 +42,14 @@ if __name__ == "__main__":
     root.config(bg="blue")
     app = SplashScreen(root)
     root.mainloop()
+
+sys._excepthook = sys.excepthook
+
+
+def my_exception_hook(exctype, value, traceback):
+    print(exctype, value, traceback)
+    sys._excepthook(exctype, value, traceback)
+    sys.exit(1)
+
+
+sys.excepthook = my_exception_hook

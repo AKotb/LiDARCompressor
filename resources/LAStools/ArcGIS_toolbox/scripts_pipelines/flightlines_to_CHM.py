@@ -31,16 +31,22 @@
 # for licensing see http://lastools.org/LICENSE.txt
 #
 
-import sys, os, arcgisscripting, subprocess
+import arcgisscripting
+import os
+import subprocess
+import sys
 
-def check_output(command,console):
+
+def check_output(command, console):
     if console == True:
         process = subprocess.Popen(command)
     else:
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
-    output,error = process.communicate()
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                   universal_newlines=True)
+    output, error = process.communicate()
     returncode = process.poll()
-    return returncode,output 
+    return returncode, output
+
 
 ### create the geoprocessor object
 gp = arcgisscripting.create(9.3)
@@ -49,19 +55,19 @@ gp = arcgisscripting.create(9.3)
 gp.AddMessage("Starting raw_flightlines_to_CHM ...")
 
 ### define positions of arguments in argv array
-arg_input_folder     =  1
-arg_tile_size        =  2
-arg_buffer           =  3
-arg_terrain_type     =  4
-arg_beam_width       =  5
-arg_step             =  6
-arg_cores            =  7
-arg_empty_temp_dir   =  8
-arg_output_dir       =  9
+arg_input_folder = 1
+arg_tile_size = 2
+arg_buffer = 3
+arg_terrain_type = 4
+arg_beam_width = 5
+arg_step = 6
+arg_cores = 7
+arg_empty_temp_dir = 8
+arg_output_dir = 9
 arg_output_base_name = 10
-arg_output_format    = 11
-arg_verbose          = 12
-arg_count_needed     = 13
+arg_output_format = 11
+arg_verbose = 12
+arg_count_needed = 13
 
 ### get number of arguments
 argc = len(sys.argv)
@@ -69,11 +75,11 @@ argc = len(sys.argv)
 ### make sure we have right number of arguments
 if argc != arg_count_needed:
     gp.AddMessage("Error. Wrong number of arguments. Got " + str(argc) + " expected " + str(arg_count_needed))
-    sys.exit(1)    
+    sys.exit(1)
 
 ### report arguments (for debug)
-#gp.AddMessage("Arguments:")
-#for i in range(0, argc):
+# gp.AddMessage("Arguments:")
+# for i in range(0, argc):
 #    gp.AddMessage("[" + str(i) + "]" + sys.argv[i])
 
 ### get selected arguments
@@ -88,14 +94,14 @@ if lastools_path.count(" ") > 0:
     gp.AddMessage("Error. Path to .\\lastools installation contains spaces.")
     gp.AddMessage("This does not work: " + lastools_path)
     gp.AddMessage("This would work:    C:\\software\\lastools")
-    sys.exit(1)    
+    sys.exit(1)
 
 ### make sure the path does not contain open or closing brackets
 if (lastools_path.count("(") > 0) or (lastools_path.count(")") > 0):
     gp.AddMessage("Error. Path to .\\lastools installation contains brackets.")
     gp.AddMessage("This does not work: " + lastools_path)
     gp.AddMessage("This would work:    C:\\software\\lastools")
-    sys.exit(1)  
+    sys.exit(1)
 
 ### complete the path to where the LAStools executables are
 lastools_path = lastools_path + "\\bin"
@@ -108,7 +114,7 @@ else:
     gp.AddMessage("Found " + lastools_path + " ...")
 
 ### create the full path to the lastile executable
-lastile_path = lastools_path+"\\lastile.exe"
+lastile_path = lastools_path + "\\lastile.exe"
 
 ### check if the lastile executable exists
 if os.path.exists(lastile_path) == False:
@@ -118,7 +124,7 @@ else:
     gp.AddMessage("Found " + lastile_path + " ...")
 
 ### create the full path to the lasground executable
-lasground_path = lastools_path+"\\lasground.exe"
+lasground_path = lastools_path + "\\lasground.exe"
 
 ### check if the lasground executable exists
 if os.path.exists(lasground_path) == False:
@@ -128,7 +134,7 @@ else:
     gp.AddMessage("Found " + lasground_path + " ...")
 
 ### create the full path to the lasheight executable
-lasheight_path = lastools_path+"\\lasheight.exe"
+lasheight_path = lastools_path + "\\lasheight.exe"
 
 ### check if the lasheight executable exists
 if os.path.exists(lasheight_path) == False:
@@ -138,7 +144,7 @@ else:
     gp.AddMessage("Found " + lasheight_path + " ...")
 
 ### create the full path to the lasthin executable
-lasthin_path = lastools_path+"\\lasthin.exe"
+lasthin_path = lastools_path + "\\lasthin.exe"
 
 ### check if the lasthin executable exists
 if os.path.exists(lasthin_path) == False:
@@ -148,7 +154,7 @@ else:
     gp.AddMessage("Found " + lasthin_path + " ...")
 
 ### create the full path to the las2dem executable
-las2dem_path = lastools_path+"\\las2dem.exe"
+las2dem_path = lastools_path + "\\las2dem.exe"
 
 ### check if the las2dem executable exists
 if os.path.exists(las2dem_path) == False:
@@ -176,7 +182,7 @@ else:
 ###################################################
 
 ### create the command string for lastile.exe
-command = ['"'+lastile_path+'"']
+command = ['"' + lastile_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -184,9 +190,9 @@ if sys.argv[arg_verbose] == "true":
 
 ### add input LiDAR
 command.append("-i")
-command.append('"'+sys.argv[arg_input_folder]+'\\*.las"')
+command.append('"' + sys.argv[arg_input_folder] + '\\*.las"')
 command.append("-i")
-command.append('"'+sys.argv[arg_input_folder]+'\\*.laz"')
+command.append('"' + sys.argv[arg_input_folder] + '\\*.laz"')
 
 ### they are flight lines
 command.append("-files_are_flightlines")
@@ -194,17 +200,17 @@ command.append("-files_are_flightlines")
 ### maybe use a user-defined tile size
 if sys.argv[arg_tile_size] != "1000":
     command.append("-tile_size")
-    command.append(sys.argv[arg_tile_size].replace(",","."))
+    command.append(sys.argv[arg_tile_size].replace(",", "."))
 
 ### maybe create a buffer around the tiles
 if sys.argv[arg_buffer] != "0":
     command.append("-buffer")
-    command.append(sys.argv[arg_buffer].replace(",","."))
+    command.append(sys.argv[arg_buffer].replace(",", "."))
 
 ### an empty temp directory must have been selected
 if empty_temp_dir != "#":
     command.append("-odir")
-    command.append('"'+empty_temp_dir+'"')
+    command.append('"' + empty_temp_dir + '"')
 else:
     gp.AddMessage("Error. no empty temp directory was specified.")
     sys.exit(1)
@@ -231,7 +237,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lastile
 gp.AddMessage(str(output))
@@ -249,7 +255,7 @@ gp.AddMessage("lastile step done.")
 ###################################################
 
 ### create the command string for lasground.exe
-command = ['"'+lasground_path+'"']
+command = ['"' + lasground_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -295,7 +301,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lasground
 gp.AddMessage(str(output))
@@ -313,7 +319,7 @@ gp.AddMessage("lasground step done.")
 ###################################################
 
 ### create the command string for lasheight.exe
-command = ['"'+lasheight_path+'"']
+command = ['"' + lasheight_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -349,7 +355,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lasheight
 gp.AddMessage(str(output))
@@ -367,7 +373,7 @@ gp.AddMessage("lasheight step done.")
 ###################################################
 
 ### create the command string for lasheight.exe
-command = ['"'+lasthin_path+'"']
+command = ['"' + lasthin_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -382,12 +388,12 @@ command.append("-highest")
 
 ### on a grid with four by four times the final step size
 command.append("-step")
-command.append(str(0.25*float(sys.argv[arg_step].replace(",","."))))
+command.append(str(0.25 * float(sys.argv[arg_step].replace(",", "."))))
 
 ### maybe splat with half the laser beam width
 if sys.argv[arg_beam_width] != "#":
     command.append("-subcircle")
-    command.append(str(0.5*float(sys.argv[arg_beam_width].replace(",","."))))
+    command.append(str(0.5 * float(sys.argv[arg_beam_width].replace(",", "."))))
 
 ### give thin-classified tiles a meaningful appendix
 command.append("-odix")
@@ -412,7 +418,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lasthin
 gp.AddMessage(str(output))
@@ -430,7 +436,7 @@ gp.AddMessage("lasthin step done.")
 ###################################################
 
 ### create the command string for las2dem.exe
-command = ['"'+las2dem_path+'"']
+command = ['"' + las2dem_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -442,7 +448,7 @@ command.append('"' + empty_temp_dir + "\\" + output_base_name + "*_ght.laz" + '"
 
 ### raster tile with requested step
 command.append("-step")
-command.append(sys.argv[arg_step].replace(",","."))
+command.append(sys.argv[arg_step].replace(",", "."))
 
 ### raster only tile interiors
 command.append("-use_tile_bb")
@@ -476,7 +482,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of las2dem 
 gp.AddMessage(str(output))
@@ -510,7 +516,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of clean-up
 gp.AddMessage(str(output))

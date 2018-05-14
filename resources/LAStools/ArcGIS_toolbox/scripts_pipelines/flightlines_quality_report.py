@@ -25,16 +25,22 @@
 # for licensing see http://lastools.org/LICENSE.txt
 #
 
-import sys, os, arcgisscripting, subprocess
+import arcgisscripting
+import os
+import subprocess
+import sys
 
-def check_output(command,console):
+
+def check_output(command, console):
     if console == True:
         process = subprocess.Popen(command)
     else:
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
-    output,error = process.communicate()
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                   universal_newlines=True)
+    output, error = process.communicate()
     returncode = process.poll()
-    return returncode,output 
+    return returncode, output
+
 
 ### create the geoprocessor object
 gp = arcgisscripting.create(9.3)
@@ -43,20 +49,20 @@ gp = arcgisscripting.create(9.3)
 gp.AddMessage("Starting flightlines_quality_check ...")
 
 ### define positions of arguments in argv array
-arg_input_folder     =  1
-arg_step             =  2
-arg_max_diff         =  3
-arg_expected         =  4
-arg_excessive        =  5
-arg_output_dir       =  6
-arg_output_validate  =  7
-arg_output_info      =  8
-arg_output_overlap   =  9
-arg_output_expected  = 10
+arg_input_folder = 1
+arg_step = 2
+arg_max_diff = 3
+arg_expected = 4
+arg_excessive = 5
+arg_output_dir = 6
+arg_output_validate = 7
+arg_output_info = 8
+arg_output_overlap = 9
+arg_output_expected = 10
 arg_output_excessive = 11
-arg_output_boundary  = 12
-arg_verbose          = 13
-arg_count_needed     = 14
+arg_output_boundary = 12
+arg_verbose = 13
+arg_count_needed = 14
 
 ### get number of arguments
 argc = len(sys.argv)
@@ -64,11 +70,11 @@ argc = len(sys.argv)
 ### make sure we have right number of arguments
 if argc != arg_count_needed:
     gp.AddMessage("Error. Wrong number of arguments. Got " + str(argc) + " expected " + str(arg_count_needed))
-    sys.exit(1)    
+    sys.exit(1)
 
 ### report arguments (for debug)
-#gp.AddMessage("Arguments:")
-#for i in range(0, argc):
+# gp.AddMessage("Arguments:")
+# for i in range(0, argc):
 #    gp.AddMessage("[" + str(i) + "]" + sys.argv[i])
 
 ### get the path to LAStools
@@ -79,14 +85,14 @@ if lastools_path.count(" ") > 0:
     gp.AddMessage("Error. Path to .\\lastools installation contains spaces.")
     gp.AddMessage("This does not work: " + lastools_path)
     gp.AddMessage("This would work:    C:\\software\\lastools")
-    sys.exit(1)    
+    sys.exit(1)
 
 ### make sure the path does not contain open or closing brackets
 if (lastools_path.count("(") > 0) or (lastools_path.count(")") > 0):
     gp.AddMessage("Error. Path to .\\lastools installation contains brackets.")
     gp.AddMessage("This does not work: " + lastools_path)
     gp.AddMessage("This would work:    C:\\software\\lastools")
-    sys.exit(1)  
+    sys.exit(1)
 
 ### complete the path to where the LAStools executables are
 lastools_path = lastools_path + "\\bin"
@@ -99,7 +105,7 @@ else:
     gp.AddMessage("Found " + lastools_path + " ...")
 
 ### create the full path to the lasvalidate executable
-lasvalidate_path = lastools_path+"\\lasvalidate.exe"
+lasvalidate_path = lastools_path + "\\lasvalidate.exe"
 
 ### check if the lasvalidate executable exists
 if os.path.exists(lasvalidate_path) == False:
@@ -109,7 +115,7 @@ else:
     gp.AddMessage("Found " + lasvalidate_path + " ...")
 
 ### create the full path to the lasinfo executable
-lasinfo_path = lastools_path+"\\lasinfo.exe"
+lasinfo_path = lastools_path + "\\lasinfo.exe"
 
 ### check if the lasinfo executable exists
 if os.path.exists(lasinfo_path) == False:
@@ -119,7 +125,7 @@ else:
     gp.AddMessage("Found " + lasinfo_path + " ...")
 
 ### create the full path to the lasoverlap executable
-lasoverlap_path = lastools_path+"\\lasoverlap.exe"
+lasoverlap_path = lastools_path + "\\lasoverlap.exe"
 
 ### check if the lasoverlap executable exists
 if os.path.exists(lasoverlap_path) == False:
@@ -129,7 +135,7 @@ else:
     gp.AddMessage("Found " + lasoverlap_path + " ...")
 
 ### create the full path to the lasgrid executable
-lasgrid_path = lastools_path+"\\lasgrid.exe"
+lasgrid_path = lastools_path + "\\lasgrid.exe"
 
 ### check if the lasgrid executable exists
 if os.path.exists(lasgrid_path) == False:
@@ -139,7 +145,7 @@ else:
     gp.AddMessage("Found " + lasgrid_path + " ...")
 
 ### create the full path to the lasboundary executable
-lasboundary_path = lastools_path+"\\lasboundary.exe"
+lasboundary_path = lastools_path + "\\lasboundary.exe"
 
 ### check if the lasboundary executable exists
 if os.path.exists(lasboundary_path) == False:
@@ -153,7 +159,7 @@ else:
 ###################################################
 
 ### create the command string for lasvalidate.exe
-command = ['"'+lasvalidate_path+'"']
+command = ['"' + lasvalidate_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -161,13 +167,13 @@ if sys.argv[arg_verbose] == "true":
 
 ### add input LiDAR
 command.append("-i")
-command.append('"'+sys.argv[arg_input_folder]+'\\*.las"')
+command.append('"' + sys.argv[arg_input_folder] + '\\*.las"')
 command.append("-i")
-command.append('"'+sys.argv[arg_input_folder]+'\\*.laz"')
+command.append('"' + sys.argv[arg_input_folder] + '\\*.laz"')
 
 ### specify the output file
 command.append("-o")
-command.append('"'+sys.argv[arg_output_dir]+"\\"+sys.argv[arg_output_validate]+'"')
+command.append('"' + sys.argv[arg_output_dir] + "\\" + sys.argv[arg_output_validate] + '"')
 
 ### report command string
 gp.AddMessage("LAStools command line:")
@@ -180,7 +186,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lasvalidate
 gp.AddMessage(str(output))
@@ -198,7 +204,7 @@ gp.AddMessage("lasvalidate step done.")
 ###################################################
 
 ### create the command string for lasinfo.exe
-command = ['"'+lasinfo_path+'"']
+command = ['"' + lasinfo_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -206,9 +212,9 @@ if sys.argv[arg_verbose] == "true":
 
 ### add input LiDAR
 command.append("-i")
-command.append('"'+sys.argv[arg_input_folder]+'\\*.las"')
+command.append('"' + sys.argv[arg_input_folder] + '\\*.las"')
 command.append("-i")
-command.append('"'+sys.argv[arg_input_folder]+'\\*.laz"')
+command.append('"' + sys.argv[arg_input_folder] + '\\*.laz"')
 
 ### merge them into one input
 command.append("-merged")
@@ -218,11 +224,11 @@ command.append("-cd")
 
 ### specify the output directory
 command.append("-odir")
-command.append('"'+sys.argv[arg_output_dir]+'"')
+command.append('"' + sys.argv[arg_output_dir] + '"')
 
 ### specify the output file
 command.append("-o")
-command.append('"'+sys.argv[arg_output_info]+'"')
+command.append('"' + sys.argv[arg_output_info] + '"')
 
 ### report command string
 gp.AddMessage("LAStools command line:")
@@ -235,7 +241,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lasinfo
 gp.AddMessage(str(output))
@@ -253,7 +259,7 @@ gp.AddMessage("lasinfo step done.")
 ###################################################
 
 ### create the command string for lasoverlap.exe
-command = ['"'+lasoverlap_path+'"']
+command = ['"' + lasoverlap_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -261,28 +267,28 @@ if sys.argv[arg_verbose] == "true":
 
 ### add input LiDAR
 command.append("-i")
-command.append('"'+sys.argv[arg_input_folder]+'\\*.las"')
+command.append('"' + sys.argv[arg_input_folder] + '\\*.las"')
 command.append("-i")
-command.append('"'+sys.argv[arg_input_folder]+'\\*.laz"')
+command.append('"' + sys.argv[arg_input_folder] + '\\*.laz"')
 
 ### merge the files as different flightlines into one input
 command.append("-files_are_flightlines")
 
 ### desired step size for overlap computations
 command.append("-step")
-command.append(sys.argv[arg_step].replace(",","."))
+command.append(sys.argv[arg_step].replace(",", "."))
 
 ### desired max_diff for coloring the difference images
 command.append("-max_diff")
-command.append(sys.argv[arg_max_diff].replace(",","."))
+command.append(sys.argv[arg_max_diff].replace(",", "."))
 
 ### specify the output directory
 command.append("-odir")
-command.append('"'+sys.argv[arg_output_dir]+'"')
+command.append('"' + sys.argv[arg_output_dir] + '"')
 
 ### specify the output file
 command.append("-o")
-command.append('"'+sys.argv[arg_output_overlap]+'"')
+command.append('"' + sys.argv[arg_output_overlap] + '"')
 
 ### report command string
 gp.AddMessage("LAStools command line:")
@@ -295,7 +301,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lasoverlap
 gp.AddMessage(str(output))
@@ -313,7 +319,7 @@ gp.AddMessage("lasoverlap step done.")
 ###################################################
 
 ### create the command string for lasgrid.exe
-command = ['"'+lasgrid_path+'"']
+command = ['"' + lasgrid_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -321,9 +327,9 @@ if sys.argv[arg_verbose] == "true":
 
 ### add input LiDAR
 command.append("-i")
-command.append('"'+sys.argv[arg_input_folder]+'\\*.las"')
+command.append('"' + sys.argv[arg_input_folder] + '\\*.las"')
 command.append("-i")
-command.append('"'+sys.argv[arg_input_folder]+'\\*.laz"')
+command.append('"' + sys.argv[arg_input_folder] + '\\*.laz"')
 
 ### merge them into one input
 command.append("-merged")
@@ -333,7 +339,7 @@ command.append("-last_only")
 
 ### desired step size for counting last returns
 command.append("-step")
-command.append(sys.argv[arg_step].replace(",","."))
+command.append(sys.argv[arg_step].replace(",", "."))
 
 ### count the points per area of size step x step
 command.append("-counter_16bit")
@@ -344,15 +350,15 @@ command.append("-false")
 ### desired min max range for mapping to false colors
 command.append("-set_min_max")
 command.append("0")
-command.append(sys.argv[arg_expected].replace(",","."))
+command.append(sys.argv[arg_expected].replace(",", "."))
 
 ### specify the output directory
 command.append("-odir")
-command.append('"'+sys.argv[arg_output_dir]+'"')
+command.append('"' + sys.argv[arg_output_dir] + '"')
 
 ### specify the output file
 command.append("-o")
-command.append('"'+sys.argv[arg_output_expected]+'"')
+command.append('"' + sys.argv[arg_output_expected] + '"')
 
 ### report command string
 gp.AddMessage("LAStools command line:")
@@ -365,7 +371,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lasgrid
 gp.AddMessage(str(output))
@@ -383,7 +389,7 @@ gp.AddMessage("lasgrid (expected) step done.")
 ###################################################
 
 ### create the command string for lasgrid.exe
-command = ['"'+lasgrid_path+'"']
+command = ['"' + lasgrid_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -391,9 +397,9 @@ if sys.argv[arg_verbose] == "true":
 
 ### add input LiDAR
 command.append("-i")
-command.append('"'+sys.argv[arg_input_folder]+'\\*.las"')
+command.append('"' + sys.argv[arg_input_folder] + '\\*.las"')
 command.append("-i")
-command.append('"'+sys.argv[arg_input_folder]+'\\*.laz"')
+command.append('"' + sys.argv[arg_input_folder] + '\\*.laz"')
 
 ### merge them into one input
 command.append("-merged")
@@ -403,7 +409,7 @@ command.append("-last_only")
 
 ### desired step size for counting last returns
 command.append("-step")
-command.append(sys.argv[arg_step].replace(",","."))
+command.append(sys.argv[arg_step].replace(",", "."))
 
 ### count the points per area of size step x step
 command.append("-counter_16bit")
@@ -414,15 +420,15 @@ command.append("-false")
 ### desired min max range for mapping to false colors
 command.append("-set_min_max")
 command.append("0")
-command.append(sys.argv[arg_excessive].replace(",","."))
+command.append(sys.argv[arg_excessive].replace(",", "."))
 
 ### specify the output directory
 command.append("-odir")
-command.append('"'+sys.argv[arg_output_dir]+'"')
+command.append('"' + sys.argv[arg_output_dir] + '"')
 
 ### specify the output file
 command.append("-o")
-command.append('"'+sys.argv[arg_output_excessive]+'"')
+command.append('"' + sys.argv[arg_output_excessive] + '"')
 
 ### report command string
 gp.AddMessage("LAStools command line:")
@@ -435,7 +441,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lasgrid
 gp.AddMessage(str(output))
@@ -453,7 +459,7 @@ gp.AddMessage("lasgrid (excessive) step done.")
 ###################################################
 
 ### create the command string for lasboundary.exe
-command = ['"'+lasboundary_path+'"']
+command = ['"' + lasboundary_path + '"']
 
 ### maybe use '-verbose' option
 if sys.argv[arg_verbose] == "true":
@@ -461,9 +467,9 @@ if sys.argv[arg_verbose] == "true":
 
 ### add input LiDAR
 command.append("-i")
-command.append('"'+sys.argv[arg_input_folder]+'\\*.las"')
+command.append('"' + sys.argv[arg_input_folder] + '\\*.las"')
 command.append("-i")
-command.append('"'+sys.argv[arg_input_folder]+'\\*.laz"')
+command.append('"' + sys.argv[arg_input_folder] + '\\*.laz"')
 
 ### merge them into one input
 command.append("-merged")
@@ -479,11 +485,11 @@ command.append("-disjoint")
 
 ### specify the output directory
 command.append("-odir")
-command.append('"'+sys.argv[arg_output_dir]+'"')
+command.append('"' + sys.argv[arg_output_dir] + '"')
 
 ### specify the output file
 command.append("-o")
-command.append('"'+sys.argv[arg_output_boundary]+'"')
+command.append('"' + sys.argv[arg_output_boundary] + '"')
 
 ### report command string
 gp.AddMessage("LAStools command line:")
@@ -496,7 +502,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lasboundary
 gp.AddMessage(str(output))

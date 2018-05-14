@@ -12,16 +12,22 @@
 # for licensing see http://lastools.org/LICENSE.txt
 #
 
-import sys, os, arcgisscripting, subprocess
+import arcgisscripting
+import os
+import subprocess
+import sys
 
-def check_output(command,console):
+
+def check_output(command, console):
     if console == True:
         process = subprocess.Popen(command)
     else:
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
-    output,error = process.communicate()
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                   universal_newlines=True)
+    output, error = process.communicate()
     returncode = process.poll()
-    return returncode,output 
+    return returncode, output
+
 
 ### create the geoprocessor object
 gp = arcgisscripting.create(9.3)
@@ -33,8 +39,8 @@ gp.AddMessage("Starting lassort ...")
 argc = len(sys.argv)
 
 ### report arguments (for debug)
-#gp.AddMessage("Arguments:")
-#for i in range(0, argc):
+# gp.AddMessage("Arguments:")
+# for i in range(0, argc):
 #    gp.AddMessage("[" + str(i) + "]" + sys.argv[i])
 
 ### get the path to LAStools
@@ -45,7 +51,7 @@ if lastools_path.count(" ") > 0:
     gp.AddMessage("Error. Path to .\\lastools installation contains spaces.")
     gp.AddMessage("This does not work: " + lastools_path)
     gp.AddMessage("This would work:    C:\\software\\lastools")
-    sys.exit(1)    
+    sys.exit(1)
 
 ### complete the path to where the LAStools executables are
 lastools_path = lastools_path + "\\bin"
@@ -58,7 +64,7 @@ else:
     gp.AddMessage("Found " + lastools_path + " ...")
 
 ### create the full path to the lassort executable
-lassort_path = lastools_path+"\\lassort.exe"
+lassort_path = lastools_path + "\\lassort.exe"
 
 ### check if executable exists
 if os.path.exists(lastools_path) == False:
@@ -68,15 +74,15 @@ else:
     gp.AddMessage("Found " + lassort_path + " ...")
 
 ### create the command string for lassort.exe
-command = ['"'+lassort_path+'"']
+command = ['"' + lassort_path + '"']
 
 ### maybe use '-verbose' option
-if sys.argv[argc-1] == "true":
+if sys.argv[argc - 1] == "true":
     command.append("-v")
 
 ### add input LiDAR
 command.append("-i")
-command.append('"'+sys.argv[1]+'"')
+command.append('"' + sys.argv[1] + '"')
 
 ### by what do we sort
 if sys.argv[2] == "gps_time":
@@ -110,23 +116,23 @@ if sys.argv[out] != "#":
         command.append("txyzi")
 
 ### maybe an output file name was selected
-if sys.argv[out+1] != "#":
+if sys.argv[out + 1] != "#":
     command.append("-o")
-    command.append('"'+sys.argv[out+1]+'"')
+    command.append('"' + sys.argv[out + 1] + '"')
 
 ### maybe an output directory was selected
-if sys.argv[out+2] != "#":
+if sys.argv[out + 2] != "#":
     command.append("-odir")
-    command.append('"'+sys.argv[out+2]+'"')
+    command.append('"' + sys.argv[out + 2] + '"')
 
 ### maybe an output appendix was selected
-if sys.argv[out+3] != "#":
+if sys.argv[out + 3] != "#":
     command.append("-odix")
-    command.append('"'+sys.argv[out+3]+'"')
+    command.append('"' + sys.argv[out + 3] + '"')
 
 ### maybe there are additional command-line options
-if sys.argv[out+4] != "#":
-    additional_options = sys.argv[out+4].split()
+if sys.argv[out + 4] != "#":
+    additional_options = sys.argv[out + 4].split()
     for option in additional_options:
         command.append(option)
 
@@ -141,7 +147,7 @@ for i in range(1, command_length):
 gp.AddMessage(command_string)
 
 ### run command
-returncode,output = check_output(command, False)
+returncode, output = check_output(command, False)
 
 ### report output of lassort
 gp.AddMessage(str(output))
