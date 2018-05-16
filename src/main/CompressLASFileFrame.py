@@ -32,13 +32,13 @@ class CompressLASFileFrame(Frame):
         outputlazbtn = Button(self.master, text="Browse", command=self.selectlaz)
         outputlazbtn.place(x=520, y=100)
 
-        startcompressbtn = Button(self.master, text="Start", command=self.compresslas)
-        startcompressbtn.place(x=480, y=200)
-        cancelcompressbtn = Button(self.master, text="Cancel", command=self.exit)
-        cancelcompressbtn.place(x=520, y=200)
+        self.startcompressbtn = Button(self.master, text="Start", command=self.compresslas)
+        self.startcompressbtn.place(x=480, y=200)
+        self.cancelcompressbtn = Button(self.master, text="Cancel", command=self.exit)
+        self.cancelcompressbtn.place(x=520, y=200)
 
     def exit(self):
-        exit()
+        self.master.destroy()
 
     def selectlas(self):
         inputlasfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select LAS File",
@@ -52,9 +52,15 @@ class CompressLASFileFrame(Frame):
         self.outputlaztxtfield.insert(END, outputlazfilepath)
 
     def compresslas(self):
+        self.cancelcompressbtn.place_forget()
+        self.startcompressbtn.place_forget()
         inputlasfilepath = self.inputlastxtfield.get("1.0", 'end-1c')
         outputlazfilepath = self.outputlaztxtfield.get("1.0", 'end-1c')
         lashandler = LASHandler.LASHandler()
         returneddata = lashandler.compresslasfile(self.CONST_LASTOOLS_PATH, inputlasfilepath, outputlazfilepath)
-        print("Compression Time: %s Sec" % returneddata[0])
-        print("Compression Ratio: %s " % returneddata[1])
+        self.okbtn = Button(self.master, text="OK", command=self.exit)
+        self.okbtn.place(x=480, y=200)
+        self.compressiontimelbl = Label(self.master, text="Compression Time: %s Sec" % returneddata[0])
+        self.compressiontimelbl.place(x=20, y=150)
+        self.compressionratiolbl = Label(self.master, text="Compression Ratio: %s " % returneddata[1])
+        self.compressionratiolbl.place(x=20, y=175)

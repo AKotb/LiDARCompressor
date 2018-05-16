@@ -32,13 +32,13 @@ class CompressASCIIFileFrame(Frame):
         outputlazbtn = Button(self.master, text="Browse", command=self.selectlaz)
         outputlazbtn.place(x=520, y=100)
 
-        startcompressbtn = Button(self.master, text="Start", command=self.compressascii)
-        startcompressbtn.place(x=480, y=200)
-        cancelcompressbtn = Button(self.master, text="Cancel", command=self.exit)
-        cancelcompressbtn.place(x=520, y=200)
+        self.startcompressbtn = Button(self.master, text="Start", command=self.compressascii)
+        self.startcompressbtn.place(x=480, y=200)
+        self.cancelcompressbtn = Button(self.master, text="Cancel", command=self.exit)
+        self.cancelcompressbtn.place(x=520, y=200)
 
     def exit(self):
-        exit()
+        self.master.destroy()
 
     def selectascii(self):
         inputasciifilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select ASCII File",
@@ -52,10 +52,16 @@ class CompressASCIIFileFrame(Frame):
         self.outputlaztxtfield.insert(END, outputlazfilepath)
 
     def compressascii(self):
+        self.cancelcompressbtn.place_forget()
+        self.startcompressbtn.place_forget()
         inputasciifilepath = self.inputasciitxtfield.get("1.0", 'end-1c')
         outputlazfilepath = self.outputlaztxtfield.get("1.0", 'end-1c')
         lashandler = LASHandler.LASHandler()
         returneddata = lashandler.compressasciifile(self.CONST_LASTOOLS_PATH, inputasciifilepath,
                                                     outputlazfilepath)
-        print("Compression Time: %s Sec" % returneddata[0])
-        print("Compression Ratio: %s " % returneddata[1])
+        self.okbtn = Button(self.master, text="OK", command=self.exit)
+        self.okbtn.place(x=480, y=200)
+        self.compressiontimelbl = Label(self.master, text="Compression Time: %s Sec" % returneddata[0])
+        self.compressiontimelbl.place(x=20, y=150)
+        self.compressionratiolbl = Label(self.master, text="Compression Ratio: %s " % returneddata[1])
+        self.compressionratiolbl.place(x=20, y=175)

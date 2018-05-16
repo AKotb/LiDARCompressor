@@ -32,13 +32,13 @@ class DecompressLAZFileFrame(Frame):
         outputlasbtn = Button(self.master, text="Browse", command=self.selectlas)
         outputlasbtn.place(x=520, y=100)
 
-        startdecompressbtn = Button(self.master, text="Start", command=self.decompresslaz)
-        startdecompressbtn.place(x=480, y=200)
-        canceldecompressbtn = Button(self.master, text="Cancel", command=self.exit)
-        canceldecompressbtn.place(x=520, y=200)
+        self.startdecompressbtn = Button(self.master, text="Start", command=self.decompresslaz)
+        self.startdecompressbtn.place(x=480, y=200)
+        self.canceldecompressbtn = Button(self.master, text="Cancel", command=self.exit)
+        self.canceldecompressbtn.place(x=520, y=200)
 
     def exit(self):
-        exit()
+        self.master.destroy()
 
     def selectlaz(self):
         inputlazfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select LAZ File",
@@ -52,8 +52,13 @@ class DecompressLAZFileFrame(Frame):
         self.outputlastxtfield.insert(END, outputlasfilepath)
 
     def decompresslaz(self):
+        self.canceldecompressbtn.place_forget()
+        self.startdecompressbtn.place_forget()
         inputlazfilepath = self.inputlaztxtfield.get("1.0", 'end-1c')
         outputlasfilepath = self.outputlastxtfield.get("1.0", 'end-1c')
         lashandler = LASHandler.LASHandler()
         returneddata = lashandler.decompresslazfile(self.CONST_LASTOOLS_PATH, inputlazfilepath, outputlasfilepath)
-        print("Decompression Time: %s Sec" % returneddata[0])
+        self.okbtn = Button(self.master, text="OK", command=self.exit)
+        self.okbtn.place(x=480, y=200)
+        self.compressiontimelbl = Label(self.master, text="Decompression Time: %s Sec" % returneddata[0])
+        self.compressiontimelbl.place(x=20, y=150)
