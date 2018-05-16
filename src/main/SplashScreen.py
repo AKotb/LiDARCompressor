@@ -31,7 +31,7 @@ class SplashScreen(object):
         self.hide()
         root = Tk.Tk()
         root.geometry("600x400")
-        app = MainFrame(root)
+        MainFrame(root)
         root.mainloop()
 
 

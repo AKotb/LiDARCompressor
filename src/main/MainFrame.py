@@ -1,9 +1,14 @@
+import Tkinter as Tk
 import os
 import tkFileDialog
 import tkMessageBox
 from Tkinter import *
 
 from src.main import LASHandler
+from src.main.CompressASCIIFileFrame import CompressASCIIFileFrame
+from src.main.CompressLASFileFrame import CompressLASFileFrame
+from src.main.DecompressASCIIFileFrame import DecompressASCIIFileFrame
+from src.main.DecompressLAZFileFrame import DecompressLAZFileFrame
 
 
 class MainFrame(Frame):
@@ -38,7 +43,7 @@ class MainFrame(Frame):
         compressmenu.add_command(label='ASCII', command=self.compressascii)
         decompressmenu = Menu(self, tearoff=False)
         toolsmenu.add_cascade(label="Decompress", menu=decompressmenu)
-        decompressmenu.add_command(label='LAS', command=self.decompresslaz)
+        decompressmenu.add_command(label='LAZ', command=self.decompresslaz)
         decompressmenu.add_command(label='ASCII', command=self.decompressascii)
         menubar.add_cascade(label="Tools", menu=toolsmenu)
 
@@ -88,50 +93,28 @@ class MainFrame(Frame):
         infofile.close()
 
     def compresslas(self):
-        inputlasfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select LAS File",
-                                                        filetypes=(("LAS Files", "*.las"), ("All Files", "*.*")))
-        lashandler = LASHandler.LASHandler()
-        data = inputlasfilepath.split('.')
-        outputlazfilepath = data[0] + ".laz"
-        returneddata = lashandler.compresslasfile(self.CONST_LASTOOLS_PATH, inputlasfilepath, outputlazfilepath,
-                                                  MainFrame)
-        self.T.delete(1.0, END)
-        self.T.insert(END, "Compression Time= %s seconds \n\n" % returneddata[0])
-        self.T.insert(END, "Compression Ratio= %s \n\n" % returneddata[1])
+        root = Tk.Tk()
+        root.geometry("600x250")
+        CompressLASFileFrame(root)
+        root.mainloop()
 
     def decompresslaz(self):
-        inputlazfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select LAZ File",
-                                                        filetypes=(("LAZ Files", "*.laz"), ("All Files", "*.*")))
-        lashandler = LASHandler.LASHandler()
-        data = inputlazfilepath.split('.')
-        outputlasfilepath = data[0] + ".las"
-        returneddata = lashandler.decompresslazfile(self.CONST_LASTOOLS_PATH, inputlazfilepath, outputlasfilepath)
-        self.T.delete(1.0, END)
-        self.T.insert(END, "Decompression Time= %s seconds \n\n" % returneddata[0])
+        root = Tk.Tk()
+        root.geometry("600x250")
+        DecompressLAZFileFrame(root)
+        root.mainloop()
 
     def compressascii(self):
-        inputasciifilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select ASCII File",
-                                                          filetypes=(("ASCII Files", "*.txt"), ("All Files", "*.*")))
-        lashandler = LASHandler.LASHandler()
-        data = inputasciifilepath.split('.')
-        outputcompressedfilepath = data[0] + ".laz"
-        returneddata = lashandler.compressasciifile(self.CONST_LASTOOLS_PATH, inputasciifilepath,
-                                                    outputcompressedfilepath)
-        self.T.delete(1.0, END)
-        self.T.insert(END, "Compression Time= %s seconds \n\n" % returneddata[0])
-        self.T.insert(END, "Compression Ratio= %s \n\n" % returneddata[1])
+        root = Tk.Tk()
+        root.geometry("600x250")
+        CompressASCIIFileFrame(root)
+        root.mainloop()
 
     def decompressascii(self):
-        inputcompressedfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select Compressed ASCII File",
-                                                               filetypes=(("Compressed ASCII Files", "*.laz"),
-                                                                          ("All Files", "*.*")))
-        lashandler = LASHandler.LASHandler()
-        data = inputcompressedfilepath.split('.')
-        outputasciifilepath = data[0] + ".txt"
-        returneddata = lashandler.decompressasciifile(self.CONST_LASTOOLS_PATH, inputcompressedfilepath,
-                                                      outputasciifilepath)
-        self.T.delete(1.0, END)
-        self.T.insert(END, "Decompression Time= %s seconds \n\n" % returneddata[0])
+        root = Tk.Tk()
+        root.geometry("600x250")
+        DecompressASCIIFileFrame(root)
+        root.mainloop()
 
 
 sys._excepthook = sys.excepthook

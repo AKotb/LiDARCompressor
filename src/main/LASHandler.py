@@ -29,7 +29,7 @@ class LASHandler:
         p.communicate()
         p.wait()
 
-    def compresslasfile(self, lastoolspath, inputlasfilepath, outputlazfilepath, MainFrame):
+    def compresslasfile(self, lastoolspath, inputlasfilepath, outputlazfilepath):
         batfilepath = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), "resources\compresslas.bat")
         start = time.time()
         p = Popen([batfilepath, lastoolspath, inputlasfilepath, outputlazfilepath], stdout=PIPE, stderr=PIPE)
