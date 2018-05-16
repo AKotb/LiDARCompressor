@@ -1,4 +1,3 @@
-import Tkinter as Tk
 import os
 import tkFileDialog
 from Tkinter import *
@@ -19,23 +18,23 @@ class CompressASCIIFileFrame(Frame):
         self.master.title("Compress ASCII File-LiDAR Compression System")
         self.pack(fill=BOTH, expand=1)
 
-        inputasciilbl = Tk.Label(self.master, text="ASCII File")
+        inputasciilbl = Label(self.master, text="ASCII File")
         inputasciilbl.place(x=20, y=50)
         self.inputasciitxtfield = Text(self.master, height=1, width=50)
         self.inputasciitxtfield.place(x=100, y=50)
-        inputasciibtn = Tk.Button(self.master, text="Browse", command=self.selectascii)
+        inputasciibtn = Button(self.master, text="Browse", command=self.selectascii)
         inputasciibtn.place(x=520, y=50)
 
-        outputlazlbl = Tk.Label(self.master, text="LAZ File")
+        outputlazlbl = Label(self.master, text="LAZ File")
         outputlazlbl.place(x=20, y=100)
         self.outputlaztxtfield = Text(self.master, height=1, width=50)
         self.outputlaztxtfield.place(x=100, y=100)
-        outputlazbtn = Tk.Button(self.master, text="Browse", command=self.selectlaz)
+        outputlazbtn = Button(self.master, text="Browse", command=self.selectlaz)
         outputlazbtn.place(x=520, y=100)
 
-        startcompressbtn = Tk.Button(self.master, text="Start", command=self.compressascii)
+        startcompressbtn = Button(self.master, text="Start", command=self.compressascii)
         startcompressbtn.place(x=480, y=200)
-        cancelcompressbtn = Tk.Button(self.master, text="Cancel", command=self.exit)
+        cancelcompressbtn = Button(self.master, text="Cancel", command=self.exit)
         cancelcompressbtn.place(x=520, y=200)
 
     def exit(self):

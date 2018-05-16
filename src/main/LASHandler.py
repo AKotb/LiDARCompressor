@@ -86,15 +86,3 @@ class LASHandler:
         compressedfilesize = float(os.path.getsize(compressedfile))
         compressionratio = float(compressedfilesize / originalfilesize) * 100
         return compressionratio
-
-
-sys._excepthook = sys.excepthook
-
-
-def my_exception_hook(exctype, value, traceback):
-    print(exctype, value, traceback)
-    sys._excepthook(exctype, value, traceback)
-    sys.exit(1)
-
-
-sys.excepthook = my_exception_hook

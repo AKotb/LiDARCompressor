@@ -1,4 +1,3 @@
-import Tkinter as Tk
 import os
 import tkFileDialog
 import tkMessageBox
@@ -15,9 +14,9 @@ class MainFrame(Frame):
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
-        self.master = master
         parentlastoolsdir = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), "resources\LAStools")
         self.CONST_LASTOOLS_PATH = os.path.join(parentlastoolsdir, "bin")
+        self.master = master
         self.init_window()
 
     def init_window(self):
@@ -93,37 +92,25 @@ class MainFrame(Frame):
         infofile.close()
 
     def compresslas(self):
-        root = Tk.Tk()
+        root = Tk()
         root.geometry("600x250")
-        CompressLASFileFrame(root)
+        app = CompressLASFileFrame(root)
         root.mainloop()
 
     def decompresslaz(self):
-        root = Tk.Tk()
+        root = Tk()
         root.geometry("600x250")
-        DecompressLAZFileFrame(root)
+        app = DecompressLAZFileFrame(root)
         root.mainloop()
 
     def compressascii(self):
-        root = Tk.Tk()
+        root = Tk()
         root.geometry("600x250")
-        CompressASCIIFileFrame(root)
+        app = CompressASCIIFileFrame(root)
         root.mainloop()
 
     def decompressascii(self):
-        root = Tk.Tk()
+        root = Tk()
         root.geometry("600x250")
-        DecompressASCIIFileFrame(root)
+        app = DecompressASCIIFileFrame(root)
         root.mainloop()
-
-
-sys._excepthook = sys.excepthook
-
-
-def my_exception_hook(exctype, value, traceback):
-    print(exctype, value, traceback)
-    sys._excepthook(exctype, value, traceback)
-    sys.exit(1)
-
-
-sys.excepthook = my_exception_hook

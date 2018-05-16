@@ -1,4 +1,3 @@
-import Tkinter as Tk
 import os
 import tkFileDialog
 from Tkinter import *
@@ -19,23 +18,23 @@ class DecompressLAZFileFrame(Frame):
         self.master.title("Decompress LAZ File-LiDAR Compression System")
         self.pack(fill=BOTH, expand=1)
 
-        inputlazlbl = Tk.Label(self.master, text="LAZ File")
+        inputlazlbl = Label(self.master, text="LAZ File")
         inputlazlbl.place(x=20, y=50)
         self.inputlaztxtfield = Text(self.master, height=1, width=50)
         self.inputlaztxtfield.place(x=100, y=50)
-        inputlazbtn = Tk.Button(self.master, text="Browse", command=self.selectlaz)
+        inputlazbtn = Button(self.master, text="Browse", command=self.selectlaz)
         inputlazbtn.place(x=520, y=50)
 
-        outputlaslbl = Tk.Label(self.master, text="LAS File")
+        outputlaslbl = Label(self.master, text="LAS File")
         outputlaslbl.place(x=20, y=100)
         self.outputlastxtfield = Text(self.master, height=1, width=50)
         self.outputlastxtfield.place(x=100, y=100)
-        outputlasbtn = Tk.Button(self.master, text="Browse", command=self.selectlas)
+        outputlasbtn = Button(self.master, text="Browse", command=self.selectlas)
         outputlasbtn.place(x=520, y=100)
 
-        startdecompressbtn = Tk.Button(self.master, text="Start", command=self.decompresslaz)
+        startdecompressbtn = Button(self.master, text="Start", command=self.decompresslaz)
         startdecompressbtn.place(x=480, y=200)
-        canceldecompressbtn = Tk.Button(self.master, text="Cancel", command=self.exit)
+        canceldecompressbtn = Button(self.master, text="Cancel", command=self.exit)
         canceldecompressbtn.place(x=520, y=200)
 
     def exit(self):
