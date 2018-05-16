@@ -35,8 +35,11 @@ class MainFrame(Frame):
         compressmenu = Menu(self, tearoff=False)
         toolsmenu.add_cascade(label="Compress", menu=compressmenu)
         compressmenu.add_command(label='LAS', command=self.compresslas)
-        compressmenu.add_command(label='ASCII')
-        toolsmenu.add_command(label="Decompress", command=self.decompresslaz)
+        compressmenu.add_command(label='ASCII', command=self.compressascii)
+        decompressmenu = Menu(self, tearoff=False)
+        toolsmenu.add_cascade(label="Decompress", menu=decompressmenu)
+        decompressmenu.add_command(label='LAS', command=self.decompresslaz)
+        decompressmenu.add_command(label='ASCII', command=self.decompressascii)
         menubar.add_cascade(label="Tools", menu=toolsmenu)
 
         helpmenu = Menu(menubar, tearoff=0)
@@ -54,7 +57,8 @@ class MainFrame(Frame):
         exit()
 
     def loadfile(self):
-        self.inputfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select LAS File", filetypes=(("LAS Files", "*.las"),("All Files", "*.*")))
+        self.inputfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select LAS File",
+                                                          filetypes=(("LAS Files", "*.las"), ("All Files", "*.*")))
         lashandler = LASHandler.LASHandler()
         self.loadedLASFile = lashandler.loadLASFile(self.inputfilepath)
         self.T.delete(1.0, END)
@@ -71,8 +75,8 @@ class MainFrame(Frame):
 
     def metadata(self):
         inputfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select Input File",
-                                                          filetypes=(("LAS Files", "*.las"), ("LAZ Files", "*.laz"),
-                                                                     ("All Files", "*.*")))
+                                                     filetypes=(("LAS Files", "*.las"), ("LAZ Files", "*.laz"),
+                                                                ("All Files", "*.*")))
         lashandler = LASHandler.LASHandler()
         lashandler.viewfileinfo(self.CONST_LASTOOLS_PATH, inputfilepath)
         data = inputfilepath.split('.')
@@ -89,8 +93,11 @@ class MainFrame(Frame):
         lashandler = LASHandler.LASHandler()
         data = inputlasfilepath.split('.')
         outputlazfilepath = data[0] + ".laz"
-        print(self.CONST_LASTOOLS_PATH)
-        lashandler.compresslasfile(self.CONST_LASTOOLS_PATH, inputlasfilepath, outputlazfilepath)
+        returneddata = lashandler.compresslasfile(self.CONST_LASTOOLS_PATH, inputlasfilepath, outputlazfilepath,
+                                                  MainFrame)
+        self.T.delete(1.0, END)
+        self.T.insert(END, "Compression Time= %s seconds \n\n" % returneddata[0])
+        self.T.insert(END, "Compression Ratio= %s \n\n" % returneddata[1])
 
     def decompresslaz(self):
         inputlazfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select LAZ File",
@@ -98,7 +105,33 @@ class MainFrame(Frame):
         lashandler = LASHandler.LASHandler()
         data = inputlazfilepath.split('.')
         outputlasfilepath = data[0] + ".las"
-        lashandler.decompresslazfile(self.CONST_LASTOOLS_PATH, inputlazfilepath, outputlasfilepath)
+        returneddata = lashandler.decompresslazfile(self.CONST_LASTOOLS_PATH, inputlazfilepath, outputlasfilepath)
+        self.T.delete(1.0, END)
+        self.T.insert(END, "Decompression Time= %s seconds \n\n" % returneddata[0])
+
+    def compressascii(self):
+        inputasciifilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select ASCII File",
+                                                          filetypes=(("ASCII Files", "*.txt"), ("All Files", "*.*")))
+        lashandler = LASHandler.LASHandler()
+        data = inputasciifilepath.split('.')
+        outputcompressedfilepath = data[0] + ".laz"
+        returneddata = lashandler.compressasciifile(self.CONST_LASTOOLS_PATH, inputasciifilepath,
+                                                    outputcompressedfilepath)
+        self.T.delete(1.0, END)
+        self.T.insert(END, "Compression Time= %s seconds \n\n" % returneddata[0])
+        self.T.insert(END, "Compression Ratio= %s \n\n" % returneddata[1])
+
+    def decompressascii(self):
+        inputcompressedfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select Compressed ASCII File",
+                                                               filetypes=(("Compressed ASCII Files", "*.laz"),
+                                                                          ("All Files", "*.*")))
+        lashandler = LASHandler.LASHandler()
+        data = inputcompressedfilepath.split('.')
+        outputasciifilepath = data[0] + ".txt"
+        returneddata = lashandler.decompressasciifile(self.CONST_LASTOOLS_PATH, inputcompressedfilepath,
+                                                      outputasciifilepath)
+        self.T.delete(1.0, END)
+        self.T.insert(END, "Decompression Time= %s seconds \n\n" % returneddata[0])
 
 
 sys._excepthook = sys.excepthook
