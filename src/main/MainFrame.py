@@ -1,21 +1,18 @@
-import os
-import tkFileDialog
 import tkMessageBox
 from Tkinter import *
 
-from src.main import LASHandler
 from src.main.CompressASCIIFileFrame import CompressASCIIFileFrame
 from src.main.CompressLASFileFrame import CompressLASFileFrame
 from src.main.DecompressASCIIFileFrame import DecompressASCIIFileFrame
 from src.main.DecompressLAZFileFrame import DecompressLAZFileFrame
+from src.main.HistogramViewer import HistogramViewer
+from src.main.MetadataViewer import MetadataViewer
 
 
 class MainFrame(Frame):
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
-        parentlastoolsdir = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), "resources\LAStools")
-        self.CONST_LASTOOLS_PATH = os.path.join(parentlastoolsdir, "bin")
         self.master = master
         self.init_window()
 
@@ -27,7 +24,6 @@ class MainFrame(Frame):
         self.master.config(menu=menubar)
 
         filemenu = Menu(menubar, tearoff=0)
-        filemenu.add_command(label="Load File", command=self.loadfile)
         filemenu.add_command(label="Exit", command=self.exit)
         menubar.add_cascade(label="File", menu=filemenu)
 
@@ -50,23 +46,9 @@ class MainFrame(Frame):
         helpmenu.add_command(label="About", command=self.about)
         menubar.add_cascade(label="Help", menu=helpmenu)
 
-        S = Scrollbar(self.master)
-        S.pack(side=RIGHT, fill=Y)
-        self.T = Text(self.master, height=400, width=380)
-        self.T.pack(side=LEFT, fill=Y)
-        S.config(command=self.T.yview)
-        self.T.config(yscrollcommand=S.set)
 
     def exit(self):
         exit()
-
-    def loadfile(self):
-        self.inputfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select LAS File",
-                                                          filetypes=(("LAS Files", "*.las"), ("All Files", "*.*")))
-        lashandler = LASHandler.LASHandler()
-        self.loadedLASFile = lashandler.loadLASFile(self.inputfilepath)
-        self.T.delete(1.0, END)
-        self.T.insert(END, "File: [" + self.inputfilepath + "] Loaded Successfully")
 
     def about(self):
         tkMessageBox.showinfo("LiDAR Compression System",
@@ -74,22 +56,16 @@ class MainFrame(Frame):
                               "LiDAR Compression System Version 0.1")
 
     def histogram(self):
-        lashandler = LASHandler.LASHandler()
-        lashandler.generateLASFileHistogram(self.loadedLASFile)
+        root = Tk()
+        root.geometry("600x150")
+        app = HistogramViewer(root)
+        root.mainloop()
 
     def metadata(self):
-        inputfilepath = tkFileDialog.askopenfilename(initialdir="/", title="Select Input File",
-                                                     filetypes=(("LAS Files", "*.las"), ("LAZ Files", "*.laz"),
-                                                                ("All Files", "*.*")))
-        lashandler = LASHandler.LASHandler()
-        lashandler.viewfileinfo(self.CONST_LASTOOLS_PATH, inputfilepath)
-        data = inputfilepath.split('.')
-        infofilepath = data[0] + "_info.txt"
-        infofile = open(infofilepath, "r")
-        self.T.delete(1.0, END)
-        for line in infofile:
-            self.T.insert(END, line)
-        infofile.close()
+        root = Tk()
+        root.geometry("600x400")
+        app = MetadataViewer(root)
+        root.mainloop()
 
     def compresslas(self):
         root = Tk()
