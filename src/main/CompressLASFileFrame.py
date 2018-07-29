@@ -3,6 +3,7 @@ import tkFileDialog
 from Tkinter import *
 
 from src.main import LASHandler
+#from src.main.Opertaion7ZIP import Operation7ZIP
 
 
 class CompressLASFileFrame(Frame):
@@ -64,3 +65,4 @@ class CompressLASFileFrame(Frame):
         self.compressiontimelbl.place(x=20, y=150)
         self.compressionratiolbl = Label(self.master, text="Compression Ratio: %s " % returneddata[1])
         self.compressionratiolbl.place(x=20, y=175)
+        # Operation7ZIP.compressfile("D:/Education/Master/Thesis/DataFiles/1221.las","D:/Education/Master/Thesis/DataFiles/1221.7z")

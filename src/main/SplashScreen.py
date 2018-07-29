@@ -1,6 +1,5 @@
 import Tkinter as Tk
 import sys
-
 from src.main.MainFrame import MainFrame
 
 
