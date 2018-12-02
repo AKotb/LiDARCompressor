@@ -1,6 +1,7 @@
 import tkMessageBox
 from Tkinter import *
 
+from src.main.ClassificationViewer import ClassificationViewer
 from src.main.CompressASCIIFileFrame import CompressASCIIFileFrame
 from src.main.CompressLASFileFrame import CompressLASFileFrame
 from src.main.DecompressASCIIFileFrame import DecompressASCIIFileFrame
@@ -36,6 +37,7 @@ class MainFrame(Frame):
         toolsmenu = Menu(menubar, tearoff=0)
         toolsmenu.add_command(label="View Metadata", command=self.metadata)
         toolsmenu.add_command(label="View Histogram", command=self.histogram)
+        toolsmenu.add_command(label="Classification", command=self.classification)
         toolsmenu.add_separator()
         compressmenu = Menu(self, tearoff=False)
         toolsmenu.add_cascade(label="Compress", menu=compressmenu)
@@ -80,6 +82,12 @@ class MainFrame(Frame):
         root = Tk()
         root.geometry("600x400")
         app = MetadataViewer(root)
+        root.mainloop()
+
+    def classification(self):
+        root = Tk()
+        root.geometry("600x400")
+        app = ClassificationViewer(root)
         root.mainloop()
 
 #############################LASzip######################################
